@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>圖片顯示測試</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        .carousel-container {
+            position: relative;
+            width: 40%;  /* 調整容器寬度 */
+            height: 40%; /* 調整容器高度 */
+            overflow: hidden;
+            background-color: black; /* 背景色防止圖片不完整顯示 */
+            margin: 0 auto; /* 使容器居中 */
+        }
+
+        .carousel-images {
+            display: flex;
+            transition: transform 1s ease-in-out;
+            width: 100%; /* 確保寬度是圖片數量的 100% */
+        }
+
+        .carousel-images img {
+            width: 100%;
+            height: 100%; /* 強制圖片填滿容器的高度 */
+            object-fit: cover; /* 使圖片覆蓋容器，會裁剪圖片但不失真 */
+            object-position: center; /* 圖片居中顯示 */
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh; /* 頁面填滿屏幕 */
+            background-color: #f8f8f8;
+            font-family: Arial, sans-serif;
+        }
+    </style>
+</head>
+<body>
+
+<div class="carousel-container">
+    <div class="carousel-images" id="carouselImages">
+        <img src="IMG_5870.png" alt="Image 1"> <!-- 用於測試的圖片 -->
+        <img src="IMG_5870.png" alt="Image 2">
+        <img src="IMG_5870.png" alt="Image 3">
+    </div>
+</div>
+
+<script>
+    let currentIndex = 0;
+    const images = document.getElementById('carouselImages');
+    const totalImages = images.children.length;
+
+    function updateCarousel() {
+        const offset = -currentIndex * 100;
+        images.style.transform = `translateX(${offset}%)`;
+    }
+
+    function prevImage() {
+        currentIndex = (currentIndex - 1 + totalImages) % totalImages;
+        updateCarousel();
+    }
+
+    function nextImage() {
+        currentIndex = (currentIndex + 1) % totalImages;
+        updateCarousel();
+    }
+
+    setInterval(nextImage, 3000); // 每3秒切換一次圖片
+</script>
+
+</body>
+</html>

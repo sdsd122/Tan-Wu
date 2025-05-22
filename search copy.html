@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>商品搜尋頁面</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f0f0f0;
+    }
+
+    .page {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 200px;
+      background-color: white;
+      border-right: 1px solid #ccc;
+      padding: 15px;
+      box-sizing: border-box;
+    }
+
+    .sidebar h3 {
+      margin-top: 0;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .sidebar li {
+      margin: 10px 0;
+      cursor: pointer;
+      color: #007BFF;
+    }
+
+    .sidebar li:hover {
+      text-decoration: underline;
+    }
+
+    .main {
+      flex: 1;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .product {
+      background-color: white;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: box-shadow 0.3s;
+    }
+
+    .product:hover {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .product img {
+      width: 100%;
+      height: 200px;
+      object-fit: contain;
+      border-radius: 4px;
+    }
+
+    .product-title {
+      margin-top: 10px;
+      font-size: 16px;
+      color: #333;
+    }
+
+    .floating-buttons {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 999;
+    }
+
+    .circle-button {
+      width: 50px;
+      height: 50px;
+      background-color: white;
+      border: 1px solid #333;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 50px;
+      font-size: 20px;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .assistant-box {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      width: 250px;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      display: none;
+      z-index: 1000;
+      border-radius: 10px;
+      overflow: hidden;
+      font-size: 14px;
+    }
+
+    .assistant-header {
+      background-color: #007BFF;
+      color: white;
+      padding: 10px;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .assistant-content {
+      padding: 10px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .close-btn {
+      cursor: pointer;
+    }
+
+    .assistant-input {
+      display: flex;
+      border-top: 1px solid #ccc;
+    }
+
+    .assistant-input input {
+      flex: 1;
+      padding: 8px;
+      border: none;
+      outline: none;
+    }
+
+    .assistant-input button {
+      padding: 8px 12px;
+      border: none;
+      background-color: #007BFF;
+      color: white;
+      cursor: pointer;
+    }
+
+    .message {
+      margin: 5px 0;
+      padding: 6px 10px;
+      border-radius: 10px;
+      max-width: 90%;
+      word-wrap: break-word;
+    }
+
+    .message.user {
+      background-color: #dcf8c6;
+      text-align: right;
+    }
+
+    .message.bot {
+      background-color: #f1f1f1;
+      text-align: left;
+    }
+  </style>
+  <script>
+    function goToProductPage(productId) {
+      window.location.href = `product.html?id=${productId}`;
+    }
+
+    function handleCategorySelect(selectElement) {
+      const value = selectElement.value;
+      if (value) {
+        alert(`你選擇了分類 ${value}`);
+      }
+    }
+
+    function scrollToTop() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+
+    function toggleAssistant() {
+      const box = document.getElementById("assistant-box");
+      box.style.display = (box.style.display === "block") ? "none" : "block";
+    }
+
+    function sendMessage() {
+      const input = document.getElementById("chat-input");
+      const chat = document.getElementById("chat-content");
+      const msg = input.value.trim();
+      if (msg === "") return;
+
+      const userMsg = document.createElement("div");
+      userMsg.className = "message user";
+      userMsg.textContent = msg;
+      chat.appendChild(userMsg);
+
+      input.value = "";
+
+      setTimeout(() => {
+        const botMsg = document.createElement("div");
+        botMsg.className = "message bot";
+        botMsg.textContent = "我收到你的訊息了：「" + msg + "」";
+        chat.appendChild(botMsg);
+        chat.scrollTop = chat.scrollHeight;
+      }, 600);
+    }
+
+    function goBack() {
+      if (document.referrer) {
+        window.location.href = document.referrer;
+      } else {
+        alert("沒有上一頁可返回");
+      }
+    }
+
+    const allProducts = [
+      { id: 1, name: "商品名稱 1", category: "1", image: "joe.png" },
+      { id: 2, name: "商品名稱 2", category: "2", image: "image.png" },
+      { id: 3, name: "商品名稱 3", category: "3", image: "image.png" },
+      { id: 4, name: "商品名稱 4", category: "1", image: "image.png" },
+      { id: 5, name: "商品名稱 5", category: "2", image: "image.png" }
+    ];
+
+    function getCategoryFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("category");
+    }
+
+    function renderProducts(category) {
+      const container = document.getElementById("product-list");
+      container.innerHTML = "";
+
+      const filtered = category
+        ? allProducts.filter(p => p.category === category)
+        : allProducts;
+
+      if (filtered.length === 0) {
+        container.innerHTML = "<p>查無此分類商品</p>";
+        return;
+      }
+
+      filtered.forEach(product => {
+        const div = document.createElement("div");
+        div.className = "product";
+        div.onclick = () => window.location.href = `product.html?id=${product.id}`;
+        div.innerHTML = `
+          <img src="${product.image}" alt="${product.name}">
+          <div class="product-title">${product.name}</div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const category = getCategoryFromURL();
+      renderProducts(category);
+    });
+  </script>
+</head>
+<body>
+  <div class="page">
+    <div class="sidebar">
+      <div style="display: flex; flex-direction: column; gap: 5px;">
+        <span><strong>類別選單</strong></span>
+        <select id="category-select" onchange="handleCategorySelect(this)">
+          <option value="">請選擇分類(如無選擇即全部)</option>
+          <option value="1">分類一</option>
+          <option value="2">分類二</option>
+          <option value="3">分類三</option>
+          <option value="4">分類四</option>
+          <option value="5">分類五</option>
+          <option value="6">分類六</option>
+          <option value="7">分類七</option>
+          <option value="8">分類八</option>
+          <option value="9">分類九</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="main" id="product-list">
+      <!-- 商品會由 JS 自動產生 -->
+    </div>
+  </div>
+
+  <!-- 浮動按鈕 -->
+  <div class="floating-buttons">
+    <div class="circle-button" onclick="scrollToTop()">TOP</div>
+    <div class="circle-button" onclick="goBack()">返回</div>
+    <div class="circle-button" onclick="toggleAssistant()">💬</div>
+  </div>
+
+  <!-- 小助手視窗 -->
+  <div id="assistant-box" class="assistant-box">
+    <div class="assistant-header">
+      小助手
+      <span class="close-btn" onclick="toggleAssistant()">✕</span>
+    </div>
+    <div class="assistant-content" id="chat-content">
+      <div class="message bot">您好！有什麼可以幫助您的呢？</div>
+    </div>
+    <div class="assistant-input">
+      <input type="text" id="chat-input" placeholder="請輸入訊息..." onkeydown="if(event.key === 'Enter') sendMessage()">
+      <button onclick="sendMessage()">送出</button>
+    </div>
+  </div>
+</body>
+</html>

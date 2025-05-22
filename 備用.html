@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三區塊表格</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;  
+        }
+        .table-container {
+            width: calc(100% - 15cm) !important; /* 左右各 10cm */
+            margin-top: 1cm !important; /* 離上方 4cm */
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 15px;
+            text-align: center;
+        }
+        /* 表頭樣式 */
+        .header {
+            background-color: lightgray;
+            font-weight: bold;
+            position: relative;
+            height: 150px; /* 設定表頭的高度 */
+        }
+        /* 圖片輪播容器 */
+        .carousel-container {
+            position: absolute;
+            top: 15%;  /* 設定距離表頭上方的比例 */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50%;  /* 控制輪播區域的寬度 */
+            height: 50%;  /* 控制輪播區域的高度 */
+            overflow: hidden;  /* 隱藏超出範圍的圖片 */
+            border: 2px solid #ddd;
+            border-radius: 10px;
+        }
+        .carousel-images {
+            display: flex;
+            transition: transform 1s ease-in-out;
+            width: 100%; /* 圖片容器的寬度設定為100% */
+        }
+        .carousel-images img {
+            width: 100%; /* 每張圖片的寬度是容器的 100%，一次只顯示一張圖片 */
+            height: 100%;
+            object-fit: cover;  /* 保持圖片比例並裁剪，填滿容器 */
+        }
+        /* 左右箭頭樣式 */
+        .arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 30px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border-radius: 50%;
+            padding: 10px;
+            cursor: pointer;
+            z-index: 2;  /* 保證箭頭位於輪播容器上層 */
+        }
+        /* 箭頭在格子外 */
+        .arrow-left {
+            left: -60px;  /* 箭頭位置在輪播區塊左側外 */
+        }
+        .arrow-right {
+            right: -60px;  /* 箭頭位置在輪播區塊右側外 */
+        }
+        .left {
+            background-color: lightblue;
+            width: 100%;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding-top: 20px;
+        }
+        .right {
+            background-color: lightgreen;
+            width: 80%;
+            height: 500px;
+            position: relative; /* 確保內部元素不會超出 */
+        }
+        /* 可調整大小的長方形格子 */
+        .resizable-box {
+            background-color: lightblue;
+            width: 400px; /* 初始寬度 */
+            height: 150px; /* 初始高度 */
+            border: 2px solid #aaa;
+            border-radius: 5px;
+            position: absolute;
+            top: 20px;
+        }
+        select {
+            width: 50%;
+            padding: 5px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="table-container">
+    <table>
+        <!-- 表頭區塊 -->
+        <tr>
+            <th class="header" colspan="2">
+                <!-- 圖片輪播 -->
+                <div class="carousel-container">
+                    <div class="carousel-images" id="carouselImages">
+                        <img src="卡芙卡.png" alt="Image 1">
+                        <img src="卡芙卡.png" alt="Image 1">
+                        <img src="卡芙卡.png" alt="Image 1">
+                        <img src="卡芙卡.png" alt="Image 1">
+                        <img src="卡芙卡.png" alt="Image 1">
+                    </div>
+                </div>
+                <!-- 左右箭頭 -->
+                <div class="arrow arrow-left" onclick="prevImage()">←</div>
+                <div class="arrow arrow-right" onclick="nextImage()">→</div>
+            </th>
+        </tr>
+        
+        <!-- 下面分成左右兩個區塊 -->
+        <tr>
+            <td class="left">
+                <label for="options">類別選單</label>
+                <select id="options">
+                    <option value="1">第一項</option>
+                    <option value="2">第二項</option>
+                    <option value="3">第三項</option>
+                </select>
+            </td>
+            
+            <td class="right">
+                <!-- 可調大小的長方形格子 -->
+                <div class="resizable-box" id="resizableBox"></div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script>
+    let currentIndex = 0;
+    const images = document.getElementById('carouselImages');
+    const totalImages = images.children.length;
+
+    // 更新輪播顯示
+    function updateCarousel() {
+        const offset = -currentIndex * 100;  // 每次移動一張圖片
+        images.style.transform = `translateX(${offset}%)`;
+    }
+
+    // 左箭頭切換圖片
+    function prevImage() {
+        currentIndex = (currentIndex - 1 + totalImages) % totalImages;
+        updateCarousel();
+    }
+
+    // 右箭頭切換圖片
+    function nextImage() {
+        currentIndex = (currentIndex + 1) % totalImages;
+        updateCarousel();
+    }
+
+    // 每3秒自動切換圖片
+    setInterval(function() {
+        nextImage();
+    }, 3000);
+
+    // 設置可調整大小格子的尺寸
+    function setResizableBoxSize(width, height) {
+        const box = document.getElementById('resizableBox');
+        box.style.width = width + 'px';
+        box.style.height = height + 'px';
+    }
+
+    // 範例: 設置格子的寬度為300px，高度為200px
+    setResizableBoxSize(1030, 100);
+</script>
+
+</body>
+</html>

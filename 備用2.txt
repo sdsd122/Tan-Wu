@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RWD 三區塊表格</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;  
+            height: 100vh;
+            background-color: #f8f8f8;
+            font-family: Arial, sans-serif;
+        }
+
+        .table-container {
+            width: 90%;
+            max-width: 1200px;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 15px;
+            text-align: center;
+        }
+
+        /* 表頭 */
+        .header {
+            background-color: lightgray;
+            font-weight: bold;
+            position: relative;
+            height: 200px;
+        }
+
+        /* 圖片輪播 */
+        .carousel-container {
+            position: absolute;
+            top: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 65%;  /* 固定寬度 */
+            height: 60%; /* 固定高度 */
+            overflow: hidden;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-color: black; /* 避免圖片尺寸不一時有空白 */
+        }
+
+        .carousel-images {
+            display: flex;
+            transition: transform 1s ease-in-out;
+            width: 100%; /* 確保寬度是圖片數量的 100% */
+        }
+
+        .carousel-images img {
+            flex: 0 0 100%; /* 確保圖片佔滿容器 */
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* 保持比例，填滿容器 */
+            object-position: center;
+        }
+
+        /* 左右箭頭 */
+        .arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 30px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border-radius: 50%;
+            padding: 10px;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .arrow-left { left: 10px; }
+        .arrow-right { right: 10px; }
+
+        /* 左右區塊 */
+        .content-row {
+            display: flex;
+            flex-wrap: nowrap;  /* 固定左右排列 */
+            align-items: stretch; /* 讓左右區塊高度一致 */
+        }
+
+        .left {
+            background-color: lightblue;
+            width: 20%;
+            height: 500px;
+            min-width: 180px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* 讓內容靠左對齊 */
+            justify-content: flex-start; /* 確保內容從上方對齊 */
+        }
+
+        .left label {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px; /* 增加與 `select` 的間距 */
+        }
+
+        .left select {
+            width: 100%;
+            padding: 8px;
+            font-size: 16px;
+        }
+
+        .right {
+            background-color: lightgreen;
+            width: 80%;
+            height: 500px;
+            display: flex;
+            justify-content: center; /* 讓內部內容水平置中 */
+            align-items: flex-start; /* 讓內容靠上方 */
+            position: relative;
+        }
+
+        /* 可調整大小的長方形格子 */
+        .resizable-box {
+            background-color: lightblue;
+            width: 90%; /* 初始寬度 */
+            height: 15%; /* 初始高度 */
+            border: 2px solid #aaa;
+            border-radius: 5px;
+            margin-top: 20px; /* 確保它離上方有間距 */
+        }
+
+        select {
+            width: 80%;
+            padding: 5px;
+            font-size: 16px;
+        }
+
+        /* RWD 調整 */
+        @media screen and (max-width: 768px) {
+            .table-container {
+                width: 100%;
+            }
+
+            .header {
+                height: 150px;
+            }
+
+            .carousel-container {
+                width: 90%;
+                height: 70%;
+            }
+
+            .content-row {
+                flex-wrap: nowrap;  /* 強制左右排列 */
+                overflow-x: auto;  /* 避免區塊過小時擠壓 */
+            }
+
+            .left {
+                width: 20%;
+                min-width: 120px;
+            }
+
+            .right {
+                width: 80%;
+            }
+
+            .resizable-box {
+                width: 90%;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="table-container">
+    <table>
+        <!-- 表頭 -->
+        <tr>
+            <th class="header" colspan="2">
+                <div class="carousel-container">
+                    <div class="carousel-images" id="carouselImages">
+                        <img src="IMG_5870.png" alt="Image 1">
+                        <img src="IMG_5870.png" alt="Image 2">
+                        <img src="IMG_5870.png" alt="Image 3">
+                    </div>
+                </div>
+                <div class="arrow arrow-left" onclick="prevImage()">←</div>
+                <div class="arrow arrow-right" onclick="nextImage()">→</div>
+            </th>
+        </tr>
+        
+        <!-- 左右區塊 -->
+        <tr>
+            <td colspan="2">
+                <div class="content-row">
+                    <div class="left">
+                        <label for="options">類別選單</label>
+                        <select id="options">
+                            <option value="1">第一項</option>
+                            <option value="2">第二項</option>
+                            <option value="3">第三項</option>
+                        </select>
+                    </div>
+                    
+                    <div class="right">
+                        <div class="resizable-box" id="resizableBox"></div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script>
+    let currentIndex = 0;
+const images = document.getElementById('carouselImages');
+const totalImages = images.children.length;
+
+// 確保容器寬度符合圖片數量
+images.style.width = `${totalImages * 100}%`;
+
+function updateCarousel() {
+    const offset = -currentIndex * 100;  
+    images.style.transform = `translateX(${offset}%)`;
+}
+
+function prevImage() {
+    currentIndex = (currentIndex - 1 + totalImages) % totalImages;
+    updateCarousel();
+}
+
+function nextImage() {
+    currentIndex = (currentIndex + 1) % totalImages;
+    updateCarousel();
+}
+
+// 自動播放，每 3 秒切換一次
+setInterval(nextImage, 3000);
+
+</script>
+
+</body>
+</html>
