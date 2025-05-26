@@ -11,6 +11,10 @@
       padding: 0;
     }
 
+    html, body {
+      overflow-x: hidden;
+    }
+
     body {
       display: flex;
       justify-content: center;
@@ -217,6 +221,7 @@
       text-decoration: underline;
     }
 
+    /* -------- 手機 RWD -------- */
     @media screen and (max-width: 768px) {
       .table-container {
         width: 100%;
@@ -232,22 +237,40 @@
       }
 
       .content-row {
-        flex-wrap: nowrap;
-        overflow-x: auto;
+        flex-direction: column;
       }
 
-      .left {
-        width: 20%;
-        min-width: 120px;
-      }
-
-      .right {
-        width: 80%;
+      .left, .right {
+        width: 100%;
+        height: auto;
       }
 
       .resizable-box {
-        width: 90%;
+        width: 100%;
         max-width: 100%;
+      }
+
+      .product-link-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .button-container {
+        position: static;
+        justify-content: center;
+        margin: 10px 0;
+      }
+
+      .arrow-left {
+        left: 10px !important;
+      }
+
+      .arrow-right {
+        right: 10px !important;
+      }
+
+      .image-overlay {
+        display: none;
       }
     }
   </style>
